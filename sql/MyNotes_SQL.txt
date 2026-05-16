@@ -1,0 +1,305 @@
+SQL � Structured Query Language
+-----------------------------------------------------------
+A database stores data in the form of tables which contains rows & columns. 
+A query is a command that we write to communicate with the database and follow syntax 
+
+Relational Db � In this we store data in tables, which has rows & columns, easy to store and flexible.
+Data is stored in a structured way that organizes data into tables, Tables -> Relations
+Ex : MySQL, Postgres, Oracle
+
+Non-Relational DB - In this we store unstructured data in the form of document, graphs, non-tabular format, Key-value pairs
+Ex: MongoDb
+------------------------------------------------------------
+CRUD Operations: 
+
+1. Create DB & TABLE:  
+
+CREATE DATABASE sampleSql - > creates a db
+
+CREATE TABLE employee(
+Id INT AUTO_INCREMENT PRIMARY KEY,
+Name VARCHAR(100) NOT NULL,
+Email VARCHAR(100) UNIQUE NOT NULL,
+gender ENUM(�male�, �female�),
+Created_at TIMESTAMP default CURRENT_TIMESTAMP
+) -> Used to create  a table
+----------------------
+CREATE DATABASE IF NOT EXISTS startersql;
+USE startersql;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    gender ENUM('Male', 'Female', 'Other'),
+    date_of_birth DATE,
+    salary DECIMAL(10, 2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+------------------------------------------------------------------------------------------------------------------
+2 .  Deleting a table or database completely � It deletes complete structure, table, data
+
+DROP DATABASE sampleSql or DROP TABLE employee
+------------------------------------------------------------------------------------------------------------------
+
+
+3. Renaming a table
+RENAME TABLE employee TO empDetails
+------------------------------------------------------------------------------------------------------------------
+
+4. Alter a table � adding any column � removing a column � modify a column
+
+ALTER TABLE employee ADD column is_active BOOLEAN default TRUE  - Adding 
+
+ALTER TABLE employee DROP column is_active � deleting
+
+ALTER TABLE employee MODIFY column name VARCHAR(150) � modifying  a column
+ALTER TABLE employee MODIFY COLUMN email VARCHAR(100) AFTER id � moving columns
+ALETER TABLE users ADD CONDTRAINT UNIQUE (email varchar(100))
+ALTER TABLE users DROP COLUMN email
+ALTER TABLE users AUTO_INCREMENT =1000;
+
+------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------
+5. Data Insertion 
+
+--insert into users values (1,"Shwe", "shweta@yopmail.com","female","2002-08-12")
+
+--insert into users values (2,"Shwe", "female","shwetaa@yopmail.com","2002-08-12");
+
+--insert into users (id,name, email,gender,date_of_birth) values (3,"Shweta", "shwe@yopmail.com","female","2001-08-12");
+
+--insert into users (name, email) values ("Shweta", "shwee@yopmail.com");
+
+--insert into users (id,name) values (4,"Shweta");
+
+--insert into users (name, email,gender,date_of_birth) values 
+("Shweta", "shwett@yopmail.com","female","2001-08-12"),
+("Shweta", "shweeee@yopmail.com","female","2001-08-12"),
+("Shweta", "shwetaaa@yopmail.com","female","2001-08-12")
+------------------------------------------------------------------------------------------------------------------
+6. Queries :
+select * from users;
+select * from users where gender != 'female';
+select * from users where date_of_birth<'1994-01-01';
+select * from users where date_of_birth between '1994-01-01' and '1999-01-01';
+select * from USERS where gender in ('male','famale') and salary > 25000
+select * from USERS where gender='male' OR salary > 25000
+--select * from USERS where gender='male' OR salary > 25000 order by date_of_birth ASC/DESC LIMIT 5--****************
+------------------------------------------------------------------------------------------------------------------
+7. Updating the Data
+UPDATE  users SET  salary = '50000', email = �shweta@exmaple.com� WHERE id = '1'
+update users set salary = salary + 10000 where salary < 60000
+------------------------------------------------------------------------------------------------------------------
+8. Delete the data
+
+DELETE from users where salary<10000 
+MYSQL Constraints
+1. UNIQUE � same data is not allowed
+2. NOT NULL � No empty 
+insert into users values (1, null, "shweta@yopamil.com",'male','2009-3-9',50000,null) ---------------> Throws exception
+3. CHECK � Adding a condition. 
+ALTER TABLE users ADD COLUMN date_of_birth  CHECK (date_of_birth  > �2001-01-01�);
+
+if we run the above query we can see that we get success message , if not then a error � Its voilated -> so we can add this as a constraint.
+4. DEFAULT -> if no value is passed then default value is taken
+created_at TIMESTAMP DEFAULT CREATED_TIMESTAMP
+5. PRIMARY = NOT NULL + UNIQUE
+6. AUTO_INCREMENT -> 
+--------------------------------------------------------------------------------------------------------------
+SQL Functions :
+This functions help us analyze, transform, or summarize data in our tables.
+1) Aggregate Functions :   
+(1) COUNT() ->  returns the total number of respective field
+SELECT COUNT(*) from USERS; -> 679
+SELECT COUNT(*) from USERS where gender = �male� -> 67
+(2) MAX() & MIN() � returns the min and max of the respective field.
+SELECT MIN(salary) AS min_salary, MAX(salary) AS max_salary from USERS;
+(3) AVG() -> Average of the specific field
+SELECT AVG(SALARY) AS avg_salary FROM users;
+(4) SUM() -> sum of the respective field
+SELECT SUM(SALARY) AS total_salary_female FROM users where gender= �female�;
+SELECT gender, AVG(SALARY) as avg_sal FROM users GROUP BY gender;
+2) STRING functions() 
+(1) LENGTH() -> length of the string
+SELECT name, LENGTH(name) AS name_length FROM users;
+(2) LOWER () -> in lower case
+SELECT id,gender, LOWER(name) AS name  FROM users;
+(3) CONCAT -> adding 2 strings
+SELECT name, LENGTH(name), gender, CONCAT(LOWER(name), �_Rai�) AS name_length FROM users;
+3) TIME Functions()  
+(1) NOW() � returns the current time
+SELECT LOWER(name) as name, now() as time from users;
+(2) YEAR() -returns the yeat
+SELECT name, YEAR(date_of_birth) as year_of_birth from users;
+(3) DAY() � retuns the date
+SELECT name, DAY(date_of_birth) as year_of_birth, DAY(NOW()) AS today from users;
+(4) MONTH() � returns the  month
+SELECT name, MONTH(date_of_birth) as year_of_birth, MONTH(NOW()) AS today from users
+(5) DATEDIFF() � returns the all days from the current day to birth day
+SELECT name, DATEDIFF(CURDATE(), date_of_birth) as total_days from users
+(6) CURRDATE() � return sthe current day
+4) Mathematical Functions()
+         1. ROUND()  2. FLOOR 3. CEIL - > when dealing with decimals
+
+5)      MOD()  - division
+       
+6) IF()
+SELECT id, name, IF(gender  = �FEMALE�, �yes�, �no�  ) as is_female from users;
+---------------------------------------------------------------------------------------------------------
+2) MYSQL TRANSACTIONS and  AUTOCOMMIT 
+
+Each query executed is a transactions and is committed, auto_commit is once a query is executed then committed no roll back option. But we cam turn off & on auto_commit.
+
+Once your sure about your transaction then merge it or commit it
+
+SET autocommit = 0 ;// you need to commit explicitly
+ROLLBACK; -> roll back to the previous commit
+COMMIT; -> new changes are committed
+---------------------------------------------------------------------------------------------------------
+3) PRIMARY KEY Constraint = NOT NULL + UNIQUE
+- Only one PRIMARY KEY in a table
+4) FOREIGN Key :     
+CREATE TABLE address(
+id INT AUTO_INCREMENT PRIMARY KEY,
+user_id INT,
+street VARCHAR(100),
+city VARCHAR(100),
+state VARCHAR(100),
+pincode VARCHAR(10),
+CONSTRAINT fk_name FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE or ON DELETE SET NULL or  ON DELETE RESTRICT 
+);
+
+So, this key helps in connecting two tables
+--------------------------------------------------------------------------------------------------------------
+5) JOINS (MOST IMPORTANT)
+-  INNER JOIN � Only returns matched ids from both the tables
+- LEFT JOIN � All rows from the left table and only matched ids from the right
+- RIGHT JOIN � ALL rows from the right table and matched ids from the left
+- OUTER JOIN � Retursn all the rows when there is a matching in either of the table
+
+EXMAPLEs : 
+
+SELECT user.id AS u_id, user.name, user.gender, address.city, address.id AS add_id
+FROM users
+LEFT JOIN address ON user.id=address.id
+--------------------------------------------------------------------------------------------------------------
+6) UNION and UNION ALL :
+
+UNION -> used to combine the tables from select queries (concatinates). Returns singles list of unique names from both the tables.
+
+SELECT  name, gender, id from users
+UNION
+SELECT name, gender, id from admin_users
+ORDER BY name;
+
+
+Rules of UNION :
+1. Data types and the columns should match in both the select query
+2. UNION removes duplicates by default
+3. UNION ALL keeps dupiclate
+--------------------------------------------------------------------------------------------------------------
+7) SELF JOINS  :
+
+In this we don�t have a specific keyword for SELF JOIN, when we join a table wit itSELF, then we use SELF JOIN, It is just a CONCEPT.
+
+ALTER TABLE users ADD COLUMN reference_by_id int 
+UPDATE users SET reference_by_id = 1 WHERE id IN (2,4,7,1,8)
+UPDATE users SET reference_by_id = 2 WHERE id IN (10,3,5,6,9)
+
+SELECT a.id, 
+a.name AS user_name,
+b.name AS reference_by_name,
+FROM  users a
+INNER JOIN users b ON a.reference_by_id = b.id
+
+Considering a same table as 2 different instance
+--------------------------------------------------------------------------------------------------------------
+8) VIEWS :
+It is a virtual � table, based on the result of a complex select query.
+It always reflects the current data � it automatically updates the data
+
+When data it updated in the referred table , automatically it will update the view
+
+
+CREATE VIEW rich_users AS 
+SELECT name, gender, salary from users WHERE salary>70000
+A view can be used as a normal table to retrieve data.
+
+SELECT * FROM rich_users;
+
+DROP VIEW rich_users;|
+
+ACTS as a saved select query instead of running the query again & again ----
+--------------------------------------------------------------------------------------------------------------
+9) INDEX : 
+
+used to fast data retrieval 
+
+SHOW INDEXES  from users;  - shows the internal
+
+Primary Key field is by default a Index
+Creating Index � CREATE INDEX INDEX_NAME FROM users(email)
+---INDEX consume extra disk-space
+---INDEXES slows down INSERT, UPDATE and DELETE operations slightly bcz indez need to be updated
+--- Don�t make unnecessary indexes
+--- to delete INDEX
+
+DROP INDEX id_email ON users
+
+USED FOR FAST RETRIVAL 
+--------------------------------------------------------------------------------------------------------------
+10)  SUB QUERIES :
+A nested query or query inside a query 
+USED in SELECT statements, WHERE clause, FROM clauses
+
+example : SELECT  * FROM users where  salary > (SELECT avg(salary) FROM USERS)
+
+----------------------------------------------------------------------------------------------------------------
+11) GROUP BY and HAVING :
+The GROUP BY clause is used to group rows  that have the same values in specified column. 
+typically used by AGGREGATE functions like, sum, ag, min, max
+
+example : 
+
+SELECT gender, avg(salary) AS avg_salary FROM users GROUP BY gender ;
+
+HAVING  -> It works like  where clause but it should be used after GROUP BY clause. Where cannot be used after GROUP by clause.
+
+SELECT gender, avg(salary) AS avg_salary, COUNT(*) FROM users  GROUP BY gender  having  AVG(salary)< 66000;
+
+ROLL UP : to get sub totals and grand  totals.
+--------------------------------------------------------------------------------------------------------------
+12)  STORED PROCEDURE : 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+

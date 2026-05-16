@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 public class MaxDepartment {
     public static class Employee{
         public int id;
@@ -50,6 +51,11 @@ public class MaxDepartment {
         public void setDepartment(String department) {
             this.department = department;
         }
+
+        @Override
+        public String toString() {
+            return "Employee{id=" + id + ", name='" + name + "', salary=" + salary + ", department='" + department + "'}";
+        }
     }
 
     public static void main(String[] args) {
@@ -72,12 +78,14 @@ public class MaxDepartment {
         employees.stream()
                 .sorted(Comparator.comparing(x->x.name))
                 .forEach(Employee -> System.out.println(Employee.toString()));
+        System.out.println(STR."------------------------------------------------------------------------");
 
         //Employeee names
         System.out.println("Employee Names only :");
         employees.stream()
                 .map(Employee::getName)
                 .forEach(System.out::println);
+        System.out.println(STR."------------------------------------------------------------------------");
 
         // Get Employee Details, with sorted Employee name,salary, department
         System.out.println("Employee Details with sorted Employee name,salary, department :");
@@ -86,14 +94,16 @@ public class MaxDepartment {
                         .thenComparing(Employee::getSalary)
                         .thenComparing(Employee::getDepartment))
                 .forEach(Employee -> System.out.println(Employee.toString()));
+        System.out.println(STR."------------------------------------------------------------------------");
 
 
         // Get Max salary
         System.out.println("Employee Max Salary :");
         employees.stream()
-                        .mapToInt(Employee::getSalary)
-                            .max()
-                                .ifPresent(System.out::println);
+                .mapToInt(Employee::getSalary)
+                .max()
+                .ifPresent(System.out::println);
+        System.out.println(STR."------------------------------------------------------------------------");
 
 
 
@@ -107,6 +117,75 @@ public class MaxDepartment {
                 .stream()
                 .max(Map.Entry.comparingByValue())
                 .ifPresent(System.out::println);
+        System.out.println(STR."------------------------------------------------------------------------");
+
+        // Group employees by department ,Expected structure: Map<String, List<Employee>>
+        System.out.println("Group employees by department");
+        employees.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDepartment));
+        System.out.println(STR."------------------------------------------------------------------------");
+
+        // Count employees in each department
+        System.out.println("Count employees in each department : ");
+        employees.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDepartment,
+                        Collectors.counting()))
+                .forEach((department, count) -> System.out.println(department + ": " + count));
+        System.out.println(STR."------------------------------------------------------------------------");
+
+        // Max salary in each department
+        System.out.println("Find the highest paid employee in each department");
+        employees.stream()
+                .collect(Collectors.groupingBy(Employee :: getDepartment, Collectors.maxBy(Comparator.comparingInt(Employee :: getSalary))))
+                .forEach((department, maxSalary) -> System.out.println(department + ": "    + maxSalary.orElse(null)));
+        System.out.println(STR."------------------------------------------------------------------------");
+
+
+        // Sum of salaries using reduce method(sums primitive and objects)
+        int total = employees.stream()
+                .map(Employee::getSalary)
+                .reduce(0, Integer::sum);
+        System.out.println(total);
+        System.out.println(STR."------------------------------------------------------------------------");
+
+        // Sum of all salaries
+        System.out.println("Sum of all Employee  Salary :");
+        int sum = employees.stream()
+                .mapToInt(Employee::getSalary)
+                .sum();
+        System.out.println(sum);
+        System.out.println(STR."------------------------------------------------------------------------");
+
+        // Average salary of employees in each department
+        System.out.println("Average salary of employees in each department :");
+        employees.stream()
+                .collect(Collectors.groupingBy(
+                        Employee :: getDepartment, Collectors.averagingInt(Employee :: getSalary)))
+                .forEach((department, averageSalary) -> System.out.println(department + ": " + averageSalary));
+        System.out.println(STR."------------------------------------------------------------------------");
+
+        // maxBy()
+        System.out.print("Max salary  : ");
+        employees.stream()
+                .collect(Collectors.maxBy(Comparator.comparingInt(Employee::getSalary)))
+                .ifPresent(System.out::println);
+        System.out.println(STR."------------------------------------------------------------------------");
+
+        // or
+        employees.stream()
+                .mapToInt(Employee :: getSalary)
+                .max()
+                .ifPresent(System.out::println);
+        System.out.println(STR."------------------------------------------------------------------------");
+
+        // Remove duplicate emp
+        employees.stream()
+                .collect(Collectors.toMap(Employee :: getId, e -> e, (e1,e2) -> e1))
+                .values()
+                .forEach(System.out::println);
+        System.out.println(STR."------------------------------------------------------------------------");
 
     }
 }
